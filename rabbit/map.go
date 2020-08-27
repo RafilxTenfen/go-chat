@@ -38,6 +38,16 @@ func (queueMap *QueueMap) Delete(key string) {
 	queueMap.Unlock()
 }
 
+// Add quantity to Queue
+func (queueMap *QueueMap) Add(key string) {
+	queueMap.Lock()
+	result, ok := queueMap.internal[key]
+	if ok {
+		result.Add()
+	}
+	queueMap.Unlock()
+}
+
 // Store update or insert value in QueueMap
 func (queueMap *QueueMap) Store(value Queue) {
 	queueMap.Lock()
