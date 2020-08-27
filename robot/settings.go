@@ -23,6 +23,7 @@ func LoadSettingsFromEnv() Settings {
 	if s, ok := os.LookupEnv("QUANTITY_MESSAGE_QUEUE"); ok {
 		v, err := strconv.ParseUint(s, 10, 64)
 		if err != nil {
+			// default value
 			fmt.Printf("%v\n", err)
 			v = 50
 		}
