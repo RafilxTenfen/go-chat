@@ -36,16 +36,22 @@ func (b *Bot) ConsumeQueue(queueName string) {
 // HandleMsgs of an delivery queue channel
 func (b *Bot) HandleMsgs(queueName string, msgs <-chan amqp.Delivery) {
 	for d := range msgs {
-		if IsCommand(d) {
-			b.HandleReceivedCommand(d)
-		}
-		log.With(log.F{
-			"msg":               string(d.Body),
-			"command":           IsCommand(d),
-			"Regexp Find":       string(regCommand.Find(d.Body)),
-			"Regexp Find Value": string(regCommandValue.Find(d.Body)),
-			"Queue RoutingKey":  d.RoutingKey,
-			"Queue Type":        d.Type,
-		}).Debug("Received a message")
+		b.HandleMsg(queueName, d)
 	}
+}
+
+// HandleMsg handle a single msg
+func (b *Bot) HandleMsg(queueName string, d amqp.Delivery) {
+	if IsCommand(d) {
+		b.HandleReceivedCommand(d)
+	}
+	b.queueMap.Add(queueName)
+	log.With(log.F{
+		"msg":               string(d.Body),
+		"command":           IsCommand(d),
+		"Regexp Find":       string(regCommand.Find(d.Body)),
+		"Regexp Find Value": string(regCommandValue.Find(d.Body)),
+		"Queue RoutingKey":  d.RoutingKey,
+		"Queue Type":        d.Type,
+	}).Debug("Received a message")
 }
