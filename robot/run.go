@@ -4,9 +4,7 @@ package robot
 func (b *Bot) Run() error {
 	b.ConsumeAllQueues()
 
-	// just to stay alive
-	forever := make(chan bool)
-	<-forever
-
+	shell := b.Shell()
+	shell.Run()
 	return nil
 }
