@@ -8,7 +8,6 @@ import (
 	"github.com/RafilxTenfen/go-chat/api"
 	"github.com/RafilxTenfen/go-chat/app"
 	"github.com/RafilxTenfen/go-chat/rabbit"
-	"github.com/rhizomplatform/log"
 	"github.com/streadway/amqp"
 )
 
@@ -30,7 +29,7 @@ func (b *Bot) HandleReceivedCommand(d amqp.Delivery) error {
 	}
 }
 
-// Stock calls for
+// Stock Bot Command searches for stock data and print in the given queue
 func (b *Bot) Stock(d amqp.Delivery) error {
 	symbol := GetCommandValue(d)
 
@@ -38,10 +37,6 @@ func (b *Bot) Stock(d amqp.Delivery) error {
 	if err != nil {
 		return err
 	}
-
-	log.With(log.F{
-		"Stock": fmt.Sprintf("%+v", stock),
-	}).Debug("Stock found")
 
 	return b.PublishStock(d.RoutingKey, stock)
 }
@@ -53,7 +48,7 @@ func (b *Bot) PublishStock(queueName string, stock *app.Stock) error {
 		return rabbit.ErrQueueNotFound
 	}
 
-	return queue.Publish(b.chanel, stock.PublishFormat())
+	return queue.Publish(b.channel, stock.PublishFormat())
 }
 
 // IsCommand returns true if the command matches with something like "/stock=stock_code"
