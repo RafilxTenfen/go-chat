@@ -6,7 +6,10 @@ import (
 )
 
 var (
+	// ErrQueueNotFound the queue doesn't exists in the internal map
 	ErrQueueNotFound = fmt.Errorf("Queue not found in map")
+	// ErrQueueAlreadyInMap the queue already exists in the internal map
+	ErrQueueAlreadyInMap = fmt.Errorf("Queue already stored in the map")
 )
 
 // QueueMap protected of concurrencies
