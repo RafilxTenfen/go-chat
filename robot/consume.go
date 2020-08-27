@@ -1,6 +1,7 @@
 package robot
 
 import (
+	"github.com/RafilxTenfen/go-chat/rabbit"
 	"github.com/rhizomplatform/log"
 	"github.com/streadway/amqp"
 )
@@ -10,12 +11,13 @@ func (b *Bot) ConsumeAllQueues() {
 	keys := b.queueMap.Keys()
 	for i := range keys {
 		name := keys[i]
-		b.ConsumeQueue(name)
+		b.ConsumeQueueByName(name)
 	}
 }
 
-// ConsumeQueue Consumes a queue and start listenning for received msgs
-func (b *Bot) ConsumeQueue(queueName string) {
+// ConsumeQueueByName retrieve the queue based on the queue map consumes a queue and start listenning for received msgs
+// at this point it assumes that the queue is already been declared
+func (b *Bot) ConsumeQueueByName(queueName string) {
 	queue, ok := b.queueMap.Load(queueName)
 	if !ok {
 		log.With(log.F{
@@ -24,13 +26,20 @@ func (b *Bot) ConsumeQueue(queueName string) {
 		return
 	}
 
-	msgs, err := queue.Consume(b.chanel)
-	if err != nil {
+	if err := b.ConsumeQueue(queue); err != nil {
 		log.WithError(err).Error("error on consume queue")
-		return
+	}
+}
+
+// ConsumeQueue Consumes a queue and start listenning for received msgs
+func (b *Bot) ConsumeQueue(queue rabbit.Queue) error {
+	msgs, err := queue.Consume(b.channel)
+	if err != nil {
+		return err
 	}
 
-	go b.HandleMsgs(queueName, msgs)
+	go b.HandleMsgs(queue.Name, msgs)
+	return nil
 }
 
 // HandleMsgs of an delivery queue channel
