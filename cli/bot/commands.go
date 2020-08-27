@@ -7,6 +7,10 @@ import (
 	"github.com/rhizomplatform/log"
 )
 
+const (
+	queues = "mqueue,otherqueue"
+)
+
 // terminalHandler exists only to "pass" the
 // cli.Terminal along without requiring a global variable and
 type terminalHandler struct {
@@ -26,6 +30,7 @@ func Main(args []string) int {
 	log.SetStdoutLevel(log.LevelDebug)
 
 	app.Command("run", "Run the bot service", func(cmd *libcmd.Cmd) {
+		cmd.String("queues", 'q', queues, "Queues name comma separated")
 		cmd.Run(h.run)
 	})
 
