@@ -8,6 +8,11 @@ type Queue struct {
 	Quantity uint16
 }
 
+// Add 1 quantity to queue
+func (q *Queue) Add() {
+	q.Quantity++
+}
+
 // NewQueue returns a new Queue
 func NewQueue(name string) Queue {
 	return Queue{
