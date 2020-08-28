@@ -13,12 +13,15 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20200330101823-46266ca37bd3
 	github.com/ibraimgm/libcmd v0.0.0-20191128182100-e7535948fadb
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
 	github.com/jonboulle/clockwork v0.2.0 // indirect
 	github.com/leekchan/accounting v1.0.0
 	github.com/rhizomplatform/fs v1.0.0
 	github.com/rhizomplatform/log v1.0.0
+	github.com/rhizomplatform/pg-null v0.0.0-20200819194757-58ad3ac0e541
 	github.com/streadway/amqp v1.0.0
 	github.com/tebeka/strftime v0.1.5 // indirect
+	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	gopkg.in/abiosoft/ishell.v2 v2.0.0
 )
