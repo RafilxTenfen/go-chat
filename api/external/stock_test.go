@@ -1,10 +1,10 @@
-package api_test
+package external_test
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/RafilxTenfen/go-chat/api"
+	"github.com/RafilxTenfen/go-chat/api/external"
 )
 
 func TestStock(t *testing.T) {
@@ -18,14 +18,14 @@ func TestStock(t *testing.T) {
 		},
 		{
 			symbol:        "aadsaplx.us",
-			expectedError: api.ErrStockNotFound,
+			expectedError: external.ErrStockNotFound,
 		},
 	}
 
 	for i := range tests {
 		test := tests[i]
 
-		stock, err := api.Stock(test.symbol)
+		stock, err := external.Stock(test.symbol)
 		if err != test.expectedError {
 			t.Errorf("Error on test %d \nReceived Error:%s", i, err.Error())
 		}
