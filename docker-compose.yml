@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: dbgochat
     volumes:
-      - "dbdata:/var/lib/postgresql/data"
+      - "dbdata:/var/lib/postgresql/go-chat/data"
 
   adminer:
     image: adminer
