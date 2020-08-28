@@ -12,7 +12,7 @@ OS=$(shell $(GOENV) | grep GOOS | sed -E 's/GOOS="(.*)"/\1/')
 SOURCES=go.mod $(shell find . -path ./cmd -prune -o -name "*.go" -print)
 
 # platforms and targets
-TARGETS=bot
+TARGETS=bot user
 PLATFORMS=linux-amd64 darwin-amd64 linux-arm7
 PLATFORM_TARGETS=$(foreach p,$(PLATFORMS),$(addprefix build/$(p)/,$(TARGETS)))
 DIST_TARGETS=$(addsuffix .tar.gz,$(addprefix dist/,$(PLATFORMS)))
@@ -63,6 +63,12 @@ check: .build-cache/testpkgs.list
 .build-cache/testpkgs.list: $(SOURCES)
 	mkdir -p .build-cache
 	go list ./... > $@
+
+db-up:
+	@ docker-compose up --build -d
+
+db-down:
+	@ docker-compose down
 
 clean:
 	rm -rf $(TARGETS) $(PLATFORM_TARGETS)
