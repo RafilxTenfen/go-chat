@@ -10,7 +10,7 @@ var (
 	ac = accounting.DefaultAccounting("$", 2)
 )
 
-// Stock represents a stock data
+// Stock represents a stock data, doesn't save in the database
 type Stock struct {
 	Symbol string
 	Date   string
