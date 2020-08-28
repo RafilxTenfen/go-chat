@@ -1,11 +1,11 @@
-package robot
+package rabbit
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
+	"github.com/rhizomplatform/log"
 )
 
 // Settings define basic settings for initiate a Bot
@@ -20,19 +20,25 @@ func LoadSettingsFromEnv() Settings {
 
 	var st Settings
 
-	if s, ok := os.LookupEnv("QUANTITY_MESSAGE_QUEUE"); ok {
-		v, err := strconv.ParseUint(s, 10, 64)
-		if err != nil {
-			// default value
-			fmt.Printf("%v\n", err)
-			v = 50
-		}
-		st.QuantityMessageQueue = uint16(v)
-	}
+	st.QuantityMessageQueue = getQuantityMessageQueue()
 
 	if s, ok := os.LookupEnv("RABBIT_MQ_URL"); ok {
 		st.RabbitMqURL = s
 	}
 
 	return st
+}
+
+func getQuantityMessageQueue() uint16 {
+	if s, ok := os.LookupEnv("QUANTITY_MESSAGE_QUEUE"); ok {
+		v, err := strconv.ParseUint(s, 10, 64)
+		if err != nil {
+			// default value
+			log.WithError(err).Error("error on convert QUANTITY_MESSAGE_QUEUE")
+			return 50
+		}
+		return uint16(v)
+	}
+	return 50
+
 }
