@@ -25,7 +25,7 @@ func Main(args []string) int {
 	app.Options.StrictOperands = true
 
 	// loggin setup
-	log.Setup(fs.Path("./log/bot"), "bot service", 30, 60)
+	log.Setup(fs.Path("./log/bot"), "botlg", 60*24, 60)
 	defer log.TearDown()
 	log.SetStdoutLevel(log.LevelDebug)
 
