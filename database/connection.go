@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/RafilxTenfen/go-chat/app"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/rhizomplatform/log"
@@ -36,10 +35,6 @@ func OpenDBConnection(s Settings) (*gorm.DB, error) {
 	}
 
 	return nil, fmt.Errorf("error on connect to the database")
-}
-
-func autoMigrateStructs(db *gorm.DB) {
-	db.AutoMigrate(&app.User{})
 }
 
 // DBConnect opens the database connect loading the settings from the .env file
