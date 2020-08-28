@@ -1,4 +1,4 @@
-package rabbit
+package app
 
 import (
 	"fmt"
@@ -16,18 +16,18 @@ var (
 // https://medium.com/@deckarep/the-new-kid-in-town-gos-sync-map-de24a6bf7c2c use map instead of built in sync.map
 type QueueMap struct {
 	sync.RWMutex
-	internal map[string]Queue
+	internal map[string]*Queue
 }
 
 // NewQueueMap return a new QueueMap
 func NewQueueMap() *QueueMap {
 	return &QueueMap{
-		internal: make(map[string]Queue),
+		internal: make(map[string]*Queue),
 	}
 }
 
 // Load retrieve a value from the Queue map
-func (queueMap *QueueMap) Load(key string) (value Queue, ok bool) {
+func (queueMap *QueueMap) Load(key string) (value *Queue, ok bool) {
 	queueMap.RLock()
 	result, ok := queueMap.internal[key]
 	queueMap.RUnlock()
@@ -41,30 +41,20 @@ func (queueMap *QueueMap) Delete(key string) {
 	queueMap.Unlock()
 }
 
-// Add quantity to Queue
-func (queueMap *QueueMap) Add(key string) {
-	queueMap.Lock()
-	result, ok := queueMap.internal[key]
-	if ok {
-		result.Add()
-	}
-	queueMap.Unlock()
-}
-
 // Store update or insert value in QueueMap
-func (queueMap *QueueMap) Store(value Queue) {
+func (queueMap *QueueMap) Store(value *Queue) {
 	queueMap.Lock()
-	queueMap.internal[value.Name] = value
+	queueMap.internal[value.Name.String] = value
 	queueMap.Unlock()
 }
 
 // NewInternal clears the internal map
 func (queueMap *QueueMap) NewInternal() {
-	queueMap.internal = make(map[string]Queue)
+	queueMap.internal = make(map[string]*Queue)
 }
 
 // Internal returns the map internal
-func (queueMap *QueueMap) Internal() map[string]Queue {
+func (queueMap *QueueMap) Internal() map[string]*Queue {
 	queueMap.Lock()
 	internal := queueMap.internal
 	queueMap.Unlock()
@@ -85,7 +75,7 @@ func (queueMap *QueueMap) Keys() []string {
 }
 
 // StoreInteral stores the entire map inside internal
-func (queueMap *QueueMap) StoreInteral(QueueMap map[string]Queue) {
+func (queueMap *QueueMap) StoreInteral(QueueMap map[string]*Queue) {
 	queueMap.Lock()
 	queueMap.internal = QueueMap
 	queueMap.Unlock()
