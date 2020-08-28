@@ -15,9 +15,10 @@ var (
 
 // User with just email and password
 type User struct {
-	UUID     null.UUID   `gorm:"primary_key" json:"uuid,omitempty"`
+	UUID     null.UUID   `gorm:"primary_key"       json:"uuid,omitempty"`
 	Email    null.String `gorm:"unique; not null," json:"email,omitempty"`
 	Password null.String `gorm:"not null"          json:"password,omitempty"`
+	Queues   []UserQueue `                         json:"queues,omitempty"`
 }
 
 // NewUser returns a new user structure
