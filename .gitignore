@@ -18,3 +18,4 @@ build/*
 rules.mk
 /log
 /user
+/tmp/*
