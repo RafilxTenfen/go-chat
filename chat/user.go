@@ -37,6 +37,7 @@ func NewUserChat(usr *app.User, db *gorm.DB) (*UserChat, error) {
 
 	conn, ch, err := rabbit.Init(st.RabbitMqURL)
 	if err != nil {
+		log.WithError(err).Error("Error on init rabbitMQ")
 		return nil, err
 	}
 
