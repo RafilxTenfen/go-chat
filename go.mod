@@ -3,7 +3,7 @@ module github.com/RafilxTenfen/go-chat
 go 1.14
 
 require (
-	github.com/abiosoft/ishell v2.0.0+incompatible // indirect
+	github.com/abiosoft/ishell v2.0.0+incompatible
 	github.com/abiosoft/readline v0.0.0-20180607040430-155bce2042db // indirect
 	github.com/chzyer/logex v1.1.10 // indirect
 	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
