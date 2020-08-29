@@ -18,4 +18,7 @@ build/*
 rules.mk
 /log
 /user
+/chatapi
 /tmp/*
+test.json
+token.id
