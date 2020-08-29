@@ -20,7 +20,7 @@ func FindUser(db *gorm.DB, user app.User) *app.User {
 // FindUserByEmail return a user based on an email
 func FindUserByEmail(db *gorm.DB, email string) *app.User {
 	var usr app.User
-	db.Where("email = ?", email).First(&usr)
+	db.Preload("Queues").Where("email = ?", email).First(&usr)
 
 	return &usr
 }
@@ -28,7 +28,7 @@ func FindUserByEmail(db *gorm.DB, email string) *app.User {
 // FindUserByUUID return a user based on an uuid
 func FindUserByUUID(db *gorm.DB, uuid null.UUID) *app.User {
 	var usr app.User
-	db.Where("uuid = ?", uuid).First(&usr)
+	db.Preload("Queues").Where("uuid = ?", uuid).First(&usr)
 
 	return &usr
 }
@@ -51,14 +51,14 @@ func InsertUser(db *gorm.DB, usr *app.User) error {
 
 // GetUser return an user based on ID
 func GetUser(db *gorm.DB, id uint) (user app.User) {
-	db.Find(&user, id)
+	db.Preload("Queues").Find(&user, id)
 	user.Clear()
 	return
 }
 
 // GetAllUsers return all users from the database
 func GetAllUsers(db *gorm.DB) (users []app.User) {
-	db.Find(&users)
+	db.Preload("Queues").Find(&users)
 	clearUsers(users)
 	return
 }
