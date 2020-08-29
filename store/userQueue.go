@@ -6,6 +6,7 @@ import (
 	"github.com/RafilxTenfen/go-chat/app"
 	"github.com/jinzhu/gorm"
 	"github.com/rhizomplatform/log"
+	null "github.com/rhizomplatform/pg-null"
 )
 
 // ExistsUsersQueue return true if the user queue exists
@@ -27,6 +28,11 @@ func ExistsUsersQueue(db *gorm.DB, usrQ *app.UserQueue) bool {
 	}
 
 	return false
+}
+
+// DeleteUserQueue deletes all userQueue based on user uuid
+func DeleteUserQueue(db *gorm.DB, uuid null.UUID) error {
+	return db.Where("user_uuid = ?", uuid).Delete(app.UserQueue{}).Error
 }
 
 // InsertUserQueue insert a UserQueue in the database
