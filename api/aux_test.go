@@ -32,7 +32,6 @@ type httpTest struct {
 	urlParams []interface{}
 	body      string
 	form      string
-	extra     string
 
 	expectedStatus int
 	expectedBody   interface{}
@@ -63,7 +62,9 @@ func withServer(t *testing.T, tests []httpTest, dep string, fn func(t *testing.T
 
 		amqpURL := "amqp://localhost:5672/%2f"
 		fakeServer := server.NewServer(amqpURL)
-		fakeServer.Start()
+		if err := fakeServer.Start(); err != nil {
+			panic(err)
+		}
 
 		conn, ch, err := rabbit.Init(amqpURL)
 		if err != nil {
@@ -76,7 +77,11 @@ func withServer(t *testing.T, tests []httpTest, dep string, fn func(t *testing.T
 
 		chatUsr := chat.NewUserChatStructure(nil, db, conn, ch, st)
 
-		defer fakeServer.Stop()
+		defer func() {
+			if err := fakeServer.Stop(); err != nil {
+				panic(err)
+			}
+		}()
 		s := api.NewServer(e, db, chatUsr)
 
 		// FIXME: maybe when roles are properly check,
