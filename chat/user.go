@@ -98,7 +98,7 @@ func (uc *UserChat) Messages(queueName string) ([]app.Message, error) {
 
 	usrQ := app.NewUserQueue(uc.user.UUID, queue)
 	if !store.ExistsUsersQueue(uc.db, usrQ) {
-		return []app.Message{}, fmt.Errorf("The user '%s' is not registered on queue '%s' found", uc.user.UUID.String(), queueName)
+		return []app.Message{}, fmt.Errorf("The user '%s' is not registered on queue '%s' found", uc.user.UUID.Base62(), queueName)
 	}
 
 	return store.FindMessagesFromUserQueue(uc.db, usrQ, uc.settings.QuantityMessageQueue), nil
