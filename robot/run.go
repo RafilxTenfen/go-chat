@@ -6,5 +6,7 @@ func (b *Bot) Run() error {
 
 	shell := b.Shell()
 	shell.Run()
+
+	defer b.Exit()
 	return nil
 }
