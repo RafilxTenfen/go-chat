@@ -72,6 +72,6 @@ db-down:
 
 clean:
 	rm -rf $(TARGETS) $(PLATFORM_TARGETS)
-	rm -rf dist build
+	rm -rf dist build log
 
 .PHONY: all dist build clean
