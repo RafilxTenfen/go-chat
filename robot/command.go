@@ -5,9 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/RafilxTenfen/go-chat/api"
+	"github.com/RafilxTenfen/go-chat/api/external"
 	"github.com/RafilxTenfen/go-chat/app"
-	"github.com/RafilxTenfen/go-chat/rabbit"
 	"github.com/streadway/amqp"
 )
 
@@ -33,7 +32,7 @@ func (b *Bot) HandleReceivedCommand(d amqp.Delivery) error {
 func (b *Bot) Stock(d amqp.Delivery) error {
 	symbol := GetCommandValue(d)
 
-	stock, err := api.Stock(symbol)
+	stock, err := external.Stock(symbol)
 	if err != nil {
 		return err
 	}
@@ -45,7 +44,7 @@ func (b *Bot) Stock(d amqp.Delivery) error {
 func (b *Bot) PublishStock(queueName string, stock *app.Stock) error {
 	queue, ok := b.queueMap.Load(queueName)
 	if !ok {
-		return rabbit.ErrQueueNotFound
+		return app.ErrQueueNotFound
 	}
 
 	return queue.Publish(b.channel, stock.PublishFormat())
