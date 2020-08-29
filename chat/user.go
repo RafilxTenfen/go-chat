@@ -61,7 +61,9 @@ func (uc *UserChat) Publish(queueName, msg string) error {
 		if err := store.InsertQueue(uc.db, queue); err != nil {
 			return err
 		}
-		queue.Declare(uc.channel)
+		if err := queue.Declare(uc.channel); err != nil {
+			return err
+		}
 	}
 	usrQ := app.NewUserQueue(uc.user.UUID, queue)
 	if !store.ExistsUsersQueue(uc.db, usrQ) {
