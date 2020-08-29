@@ -1,7 +1,10 @@
 package robot
 
 import (
-	"github.com/RafilxTenfen/go-chat/rabbit"
+	"fmt"
+
+	"github.com/RafilxTenfen/go-chat/app"
+	"github.com/RafilxTenfen/go-chat/store"
 	"github.com/rhizomplatform/log"
 	"github.com/streadway/amqp"
 )
@@ -32,35 +35,47 @@ func (b *Bot) ConsumeQueueByName(queueName string) {
 }
 
 // ConsumeQueue Consumes a queue and start listenning for received msgs
-func (b *Bot) ConsumeQueue(queue rabbit.Queue) error {
+func (b *Bot) ConsumeQueue(queue *app.Queue) error {
 	msgs, err := queue.Consume(b.channel)
 	if err != nil {
 		return err
 	}
 
-	go b.HandleMsgs(queue.Name, msgs)
+	queue.SetConsuming(true)
+	if err := store.UpsertQueue(b.db, queue); err != nil {
+		return err
+	}
+	b.queueMap.Store(queue)
+
+	go b.HandleMsgs(queue, msgs)
 	return nil
 }
 
 // HandleMsgs of an delivery queue channel
-func (b *Bot) HandleMsgs(queueName string, msgs <-chan amqp.Delivery) {
+func (b *Bot) HandleMsgs(queue *app.Queue, msgs <-chan amqp.Delivery) {
 	for d := range msgs {
-		b.HandleMsg(queueName, d)
+		b.HandleMsg(queue, d)
 	}
 }
 
 // HandleMsg handle a single msg
-func (b *Bot) HandleMsg(queueName string, d amqp.Delivery) {
+func (b *Bot) HandleMsg(queue *app.Queue, d amqp.Delivery) {
 	if IsCommand(d) {
-		b.HandleReceivedCommand(d)
+		if err := b.HandleReceivedCommand(d); err != nil {
+			log.WithError(err).Error("Error on handle command")
+			queue.Publish(b.channel, fmt.Sprintf("Error on handle command: %s", err.Error()))
+		}
 	}
-	b.queueMap.Add(queueName)
+	strMessage := string(d.Body)
 	log.With(log.F{
-		"msg":               string(d.Body),
-		"command":           IsCommand(d),
-		"Regexp Find":       string(regCommand.Find(d.Body)),
-		"Regexp Find Value": string(regCommandValue.Find(d.Body)),
-		"Queue RoutingKey":  d.RoutingKey,
-		"Queue Type":        d.Type,
-	}).Debug("Received a message")
+		"msg":              strMessage,
+		"command":          IsCommand(d),
+		"Queue RoutingKey": d.RoutingKey,
+	}).Info("Received a message")
+
+	msg := app.NewMessage(strMessage, queue.ID)
+	if err := store.InsertMessage(b.db, msg); err != nil {
+		log.WithError(err).Error("Error on insert message on database")
+		return
+	}
 }
