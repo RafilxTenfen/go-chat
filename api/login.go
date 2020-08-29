@@ -28,7 +28,7 @@ func (s *Server) login(c echo.Context) error {
 
 	otherUsr := store.FindUserByEmail(s.db, usr.Email.String)
 	if otherUsr == nil || otherUsr.Valid() != nil {
-		err := fmt.Errorf("This email %s doesn't exists", otherUsr.Email.String)
+		err := fmt.Errorf("This email %s doesn't exists", usr.Email.String)
 		log.Error(err)
 		return c.String(http.StatusNotFound, err.Error())
 	}
@@ -55,4 +55,22 @@ func (s *Server) login(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, Token{t})
+}
+
+// MockJWTToken mocks the jwt token authentication
+func (s *Server) MockJWTToken() {
+
+	// set claims
+	claims := &JwtClaims{
+		UUID:  "6tXaLO1p4I8cLbGkgl8Jgy",
+		Email: "adminx201@gmail.com",
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * jwtExpiresHours).Unix(),
+		},
+	}
+
+	// create token with claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	s.SetCustomContextKey("token", token)
 }

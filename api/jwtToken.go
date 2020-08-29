@@ -40,6 +40,7 @@ func JwtMiddlewareConfig() middleware.JWTConfig {
 		Claims:     &JwtClaims{},
 		SigningKey: []byte(signedJWTString),
 		ContextKey: "token",
+		Skipper:    CustomSkipper,
 	}
 }
 
