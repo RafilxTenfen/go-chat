@@ -20,6 +20,17 @@ type UserChat struct {
 	settings   rabbit.Settings
 }
 
+// NewUserChatStructure return a new user chat structure
+func NewUserChatStructure(usr *app.User, db *gorm.DB, conn *amqp.Connection, ch *amqp.Channel, st rabbit.Settings) *UserChat {
+	return &UserChat{
+		user:       usr,
+		connection: conn,
+		channel:    ch,
+		db:         db,
+		settings:   st,
+	}
+}
+
 // NewUserChat returns a UserChat structure based on an user
 func NewUserChat(usr *app.User, db *gorm.DB) (*UserChat, error) {
 	st := rabbit.LoadSettingsFromEnv()
@@ -29,13 +40,7 @@ func NewUserChat(usr *app.User, db *gorm.DB) (*UserChat, error) {
 		return nil, err
 	}
 
-	return &UserChat{
-		user:       usr,
-		connection: conn,
-		channel:    ch,
-		db:         db,
-		settings:   st,
-	}, nil
+	return NewUserChatStructure(usr, db, conn, ch, st), nil
 }
 
 // SetUser sets the user into userChat structure
