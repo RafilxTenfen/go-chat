@@ -38,6 +38,11 @@ func NewUserChat(usr *app.User, db *gorm.DB) (*UserChat, error) {
 	}, nil
 }
 
+// SetUser sets the user into userChat structure
+func (uc *UserChat) SetUser(user *app.User) {
+	uc.user = user
+}
+
 // Exit closes the user channel
 func (uc *UserChat) Exit() {
 	if err := uc.channel.Close(); err != nil {
@@ -45,6 +50,9 @@ func (uc *UserChat) Exit() {
 	}
 	if err := uc.connection.Close(); err != nil {
 		log.WithError(err).Error("error on close user connection")
+	}
+	if err := uc.db.Close(); err != nil {
+		log.WithError(err).Error("error on close the database connection")
 	}
 }
 
