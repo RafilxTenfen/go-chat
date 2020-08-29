@@ -21,3 +21,13 @@ func (s Server) RestrictedJWTMiddleware(groups ...*echo.Group) {
 		g.Use(middleware.JWTWithConfig(JwtMiddlewareConfig()))
 	}
 }
+
+// CustomContextMiddleware sets pairs 'key:value' in the default echo.Context
+func CustomContextMiddleware(key string, val interface{}) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set(key, val)
+			return next(c)
+		}
+	}
+}
