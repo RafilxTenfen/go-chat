@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    container_name: userlogin_postgres
+    container_name: gochat_postgres
     image: postgres:12.1-alpine
     ports:
       - "5432:5432"
