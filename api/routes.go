@@ -19,9 +19,11 @@ func (s *Server) Routes() {
 // RestrictedRoutes define the restricted routes
 func (s *Server) RestrictedRoutes(g *echo.Group) {
 	s.UserRoutes(g.Group("/user"))
+	s.PublishRoutes(g.Group("/publish"))
+	s.MessageRoutes(g.Group("/messages"))
 }
 
-// UserRoutes define the Account routes /api/user
+// UserRoutes define the User routes /api/user
 func (s *Server) UserRoutes(accountGroup *echo.Group) {
 	accountGroup.GET("", s.getAllUser)
 	accountGroup.POST("", s.addUser)
@@ -29,13 +31,17 @@ func (s *Server) UserRoutes(accountGroup *echo.Group) {
 	accountGroup.DELETE("/:userUUID", s.deleteUser)
 	accountGroup.PUT("/:userUUID", s.updateUser)
 
-	// publish
-	accountGroup.POST("/publish/:queueName", s.publishMessage)
-	accountGroup.GET("/publish/*", s.publishMessageQuery)
-
-	// get messages
-	accountGroup.POST("/messages/:queueName", s.getMessages)
-	accountGroup.GET("/messages/*", s.getMessagesQuery)
-
 	accountGroup.Any("/:userUUID/*", echo.NotFoundHandler)
+}
+
+// PublishRoutes define the Publish routes /api/publish
+func (s *Server) PublishRoutes(accountGroup *echo.Group) {
+	accountGroup.POST("/:queueName", s.publishMessage)
+	accountGroup.GET("/*", s.publishMessageQuery)
+}
+
+// MessageRoutes define the Message routes /api/messages
+func (s *Server) MessageRoutes(accountGroup *echo.Group) {
+	accountGroup.POST("/:queueName", s.getMessages)
+	accountGroup.GET("/*", s.getMessagesQuery)
 }
