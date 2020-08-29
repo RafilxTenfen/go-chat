@@ -55,10 +55,13 @@ func (b *Bot) Exit() {
 		log.WithError(err).Error("error on close channel")
 	}
 	if err := b.connection.Close(); err != nil {
-		log.WithError(err).Error("error on close channel")
+		log.WithError(err).Error("error on close RabbitMQ connection")
 	}
 	if err := b.UncossumeQueues(); err != nil {
-		log.WithError(err).Error("error on close channel")
+		log.WithError(err).Error("error on Unconssume Queues")
+	}
+	if err := b.db.Close(); err != nil {
+		log.WithError(err).Error("error on close database connection")
 	}
 }
 
