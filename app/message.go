@@ -8,7 +8,7 @@ import (
 // Message defines a queue message
 type Message struct {
 	gorm.Model
-	Message null.String `gorm:"not null" json:"name,omitempty"`
+	Message null.String `gorm:"not null" json:"message,omitempty"`
 	QueueID uint        `gorm:"not null" json:"-"`
 }
 
