@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	regAllCommandMsg = regexp.MustCompile("^\\/\\w+=[A-Za-z0-9_.]+")
-	regCommand       = regexp.MustCompile("\\w+")
-	regCommandValue  = regexp.MustCompile("[A-Za-z0-9_.]+$")
+	regAllCommandMsg = regexp.MustCompile(`^\\/\\w+=[A-Za-z0-9_.]+`)
+	regCommand       = regexp.MustCompile(`\\w+`)
+	regCommandValue  = regexp.MustCompile(`[A-Za-z0-9_.]+$`)
 )
 
 // HandleReceivedCommand receives a command

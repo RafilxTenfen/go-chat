@@ -63,7 +63,9 @@ func (b *Bot) HandleMsg(queue *app.Queue, d amqp.Delivery) {
 	if IsCommand(d) {
 		if err := b.HandleReceivedCommand(d); err != nil {
 			log.WithError(err).Error("Error on handle command")
-			queue.Publish(b.channel, fmt.Sprintf("Error on handle command: %s", err.Error()))
+			if err := queue.Publish(b.channel, fmt.Sprintf("Error on handle command: %s", err.Error())); err != nil {
+				log.WithError(err).Error("Error on publish message")
+			}
 		}
 	}
 	strMessage := string(d.Body)
