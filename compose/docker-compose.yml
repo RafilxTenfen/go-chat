@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: gochat_postgres
+    image: postgres:12.1-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dbgochat
+    volumes:
+      - "dbdata:/var/lib/postgresql/go-chat/data"
+
+  adminer:
+    image: adminer
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8080"
+
+  rabbitmq:
+    image:  rabbitmq:3.7-management
+    command: rabbitmq-server
+    ports: 
+      - 8080:15672
+      - 5672:5672
+      - 25676:25676
+    volumes:
+      - "mqdatadata:/var/lib/rabbitmq/go-chat/data"
+  
+  chatapi:
+    build: 
+      context: ../
+      dockerfile: chatapi.dockerfile
+    ports: 
+      - "4444:4444"
+    links: 
+      - rabbitmq
+      - postgres
+
+    environment: 
+      QUANTITY_MESSAGE_QUEUE: 50
+      RABBIT_MQ_URL: amqp://guest:guest@rabbitmq:5672/
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432     
+      DATABASE_USER: postgres 
+      DATABASE_PASSWORD: postgres 
+      DATABASE_NAME: dbgochat
+    restart: always
+    depends_on: 
+      - postgres
+      - rabbitmq
+
+  robot:
+    build: 
+      context: ../
+      dockerfile: robot.dockerfile
+    links: 
+      - rabbitmq
+      - postgres
+
+    environment: 
+      QUANTITY_MESSAGE_QUEUE: 50
+      RABBIT_MQ_URL: amqp://guest:guest@rabbitmq:5672/
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432     
+      DATABASE_USER: postgres 
+      DATABASE_PASSWORD: postgres 
+      DATABASE_NAME: dbgochat
+    restart: always
+    depends_on: 
+      - postgres
+      - rabbitmq
+
+volumes:
+  dbdata:
+  mqdatadata:
