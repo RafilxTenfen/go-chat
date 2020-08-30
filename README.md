@@ -6,11 +6,19 @@
 from an API using a specific command.
 
 - The messages are just processed when the bot consume then
+- There is no front-end 
+- All the commands are available through CLI or API
 
 ## How to Run
 
-### Dev enviroment
+### Compose
+- To run the adminer, postgres, rabbitmq, api, and robot
+- Run the docker-compose inside `compose`
+```shell
+$~ docker-compose -f compose/docker-compose.yml up --build --remove-orphans -d
+```
 
+### Dev enviroment
 
 #### Building
 - To build all the binaries, just type:
