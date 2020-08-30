@@ -22,10 +22,7 @@ type Settings struct {
 func SettingsFromEnv() (Settings, error) {
 	var s Settings
 
-	if err := godotenv.Load(".env"); err != nil {
-		log.Error(err) // just print the error if a .env does not exists
-	}
-
+	_ = godotenv.Load(".env")
 	host, ok := os.LookupEnv("DATABASE_HOST")
 	if !ok {
 		return s, fmt.Errorf("Error on read HOST enviroment value")
