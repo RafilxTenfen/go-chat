@@ -24,5 +24,6 @@ func (t *terminalHandler) run(cmd *libcmd.Cmd) error {
 		return err
 	}
 
-	return bot.Run()
+	b := cmd.GetBool("useshell")
+	return bot.Run(*b)
 }

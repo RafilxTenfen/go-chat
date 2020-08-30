@@ -31,6 +31,7 @@ func Main(args []string) int {
 
 	app.Command("run", "Run the bot service", func(cmd *libcmd.Cmd) {
 		cmd.String("queues", 'q', queues, "Queues name comma separated")
+		cmd.Bool("useshell", 's', true, "Define if it should use interactive shell")
 		cmd.Run(h.run)
 	})
 

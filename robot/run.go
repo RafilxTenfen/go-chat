@@ -1,11 +1,16 @@
 package robot
 
 // Run the robot that listen to all commands
-func (b *Bot) Run() error {
+func (b *Bot) Run(useShell bool) error {
 	b.ConsumeAllQueues()
 
-	shell := b.Shell()
-	shell.Run()
+	if useShell {
+		shell := b.Shell()
+		shell.Run()
+	} else {
+		forever := make(chan bool)
+		<-forever
+	}
 
 	defer b.Exit()
 	return nil
