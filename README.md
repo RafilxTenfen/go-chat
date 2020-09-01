@@ -190,3 +190,6 @@ $~ curl -H 'Content-Type: application/json' -H (printf 'Authorization: Bearer %s
  http://localhost:4444/api/messages/\?queue\=q1
 ```
 
+
+## How to test
+- Just run `make check`
