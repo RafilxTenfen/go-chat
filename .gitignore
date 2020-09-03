@@ -12,7 +12,6 @@
 dist/*
 build/*
 .build-cache/*
-rules.mk
 /log
 /user
 /chatapi
