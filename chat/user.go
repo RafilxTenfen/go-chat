@@ -79,6 +79,11 @@ func (uc *UserChat) Publish(queueName, msg string) error {
 			return err
 		}
 	}
+
+	if uc.user == nil {
+		return fmt.Errorf("Error on find user from userChat")
+	}
+
 	usrQ := app.NewUserQueue(uc.user.UUID, queue)
 	if !store.ExistsUsersQueue(uc.db, usrQ) {
 		if err := store.InsertUserQueue(uc.db, usrQ); err != nil {
