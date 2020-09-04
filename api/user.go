@@ -126,7 +126,7 @@ func (s *Server) setUserChatFromRequest(c echo.Context) error {
 
 	if err := usr.Valid(); err != nil {
 		log.Error(err)
-		return c.String(http.StatusBadRequest, err.Error())
+		return c.String(http.StatusBadRequest, fmt.Sprintf("Erro on find user from JWT '%+v'", err))
 	}
 	s.SetUser(usr)
 
