@@ -13,6 +13,7 @@ from an API using a specific command.
 
 ### Compose
 - To run the adminer, postgres, rabbitmq, api, and robot
+- The robot using compose will start to consume 2 fixed queues `{"queue-name", "q1"}`
 - Run the docker-compose inside `compose`
 ```shell
 $~ docker-compose -f compose/docker-compose.yml up --build --remove-orphans -d
