@@ -4,9 +4,11 @@ WORKDIR /app
 COPY . .
 RUN make GOOS=linux GOARCH=amd64 CGO_ENABLED=0 EXTLDFLAGS="-static" FLAGS="-tags netgo" bot
 
-FROM scratch as gorobot
+FROM alpine as gorobot
 
 WORKDIR /app
+
+RUN apk --no-cache add ca-certificates
 
 ENV QUANTITY_MESSAGE_QUEUE 50
 ENV RABBIT_MQ_URL amqp://guest:guest@localhost:5672/
