@@ -4,6 +4,7 @@ BUILDENV=GOTRACEBACK=none CGO_ENABLED=0
 GOENV=$(GO) env
 FLAGS=-trimpath
 LDFLAGS=-ldflags "-w -s"
+CMD_PACKAGE=./cmd
 
 # os/env information
 ARCH=$(shell $(GOENV) | grep GOARCH | sed -E 's/GOARCH="(.*)"/\1/')
@@ -14,49 +15,39 @@ SOURCES=go.mod $(shell find . -path ./cmd -prune -o -name "*.go" -print)
 
 # platforms and targets
 TARGETS=bot user chatapi
-PLATFORMS=linux-amd64 darwin-amd64 linux-arm7
-PLATFORM_TARGETS=$(foreach p,$(PLATFORMS),$(addprefix build/$(p)/,$(TARGETS)))
-DIST_TARGETS=$(addsuffix .tar.gz,$(addprefix dist/,$(PLATFORMS)))
+PLATFORMS=linux-amd64 linux-386 darwin-amd64 linux-arm7
+PLATFORM_TARGETS = $(foreach platf,$(PLATFORMS),$(addprefix .build-cache/$(platf)/,$(TARGETS)))
+DIST_TARGETS = $(foreach platf,$(PLATFORMS),.build-cache/rhizom-$(LASTTAG).$(platf).tar.gz)
 
 
 all: build
 
 dist: $(DIST_TARGETS)
+	rm -rf dist
+	mkdir -p dist
+	mv .build-cache/*.tar.gz dist/
 
 build: $(TARGETS)
 
-# general build rule
-define BUILD_RULE
-$(TARGET)_SOURCES=$$(shell find ./cmd/$(TARGET) -name "*.go")
+%: .build-cache/$(OS)-$(ARCH)/%
+	cp $< $@
 
-$(TARGET): build/$$(OS)-$$(ARCH)/$(TARGET)
-	cp $$< $$@
+.build-cache/linux-amd64/%: $(CMD_PACKAGE)/% $(SOURCES)
+	env $(BUILDENV) GOARCH=amd64 GOOS=linux $(GOBUILD) $(FLAGS) $(LDFLAGS) -o $@ ./$<
 
-build/linux-amd64/$(TARGET): $$($(TARGET)_SOURCES) $$(SOURCES)
-	env $(BUILDENV) GOARCH=amd64 GOOS=linux $$(GOBUILD) $$(FLAGS) $$(LDFLAGS) -o $$@ ./cmd/$(TARGET)
+.build-cache/linux-386/%: $(CMD_PACKAGE)/% $(SOURCES)
+	env $(BUILDENV) GOARCH=386 GOOS=linux $(GOBUILD) $(FLAGS) $(LDFLAGS) -o $@ ./$<
 
-build/darwin-amd64/$(TARGET): $$($(TARGET)_SOURCES) $$(SOURCES)
-	env $(BUILDENV) GOARCH=amd64 GOOS=darwin $$(GOBUILD) $$(FLAGS) $$(LDFLAGS) -o $$@ ./cmd/$(TARGET)
+.build-cache/darwin-amd64/%: $(CMD_PACKAGE)/% $(SOURCES)
+	env $(BUILDENV) GOARCH=amd64 GOOS=darwin $(GOBUILD) $(FLAGS) $(LDFLAGS) -o $@ ./$<
 
-build/linux-arm7/$(TARGET): $$($(TARGET)_SOURCES) $$(SOURCES)
-	env $(BUILDENV) GOARM=7 GOARCH=arm GOOS=linux $$(GOBUILD) $$(FLAGS) $$(LDFLAGS) -o $$@ ./cmd/$(TARGET)
+.build-cache/linux-arm7/%: $(CMD_PACKAGE)/% $(SOURCES)
+	env $(BUILDENV) GOARM=7 GOARCH=arm GOOS=linux $(GOBUILD) $(FLAGS) $(LDFLAGS) -o $@ ./$<
 
-endef
 
-# rule for dist targets
-define DIST_RULE
-dist/$(PLATFORM).tar.gz: $$(addprefix build/$(PLATFORM)/,$$(TARGETS))
-	mkdir -p dist
-	tar -czf $$@ -C build/$(PLATFORM) .
-
-endef
-
-rules.mk: Makefile
-	$(file > $@,)
-	$(foreach TARGET,$(TARGETS),$(file >> $@,$(BUILD_RULE)))
-	$(foreach PLATFORM,$(PLATFORMS),$(file >> $@,$(DIST_RULE)))
-
-include rules.mk
+.build-cache/rhizom-$(LASTTAG).%.tar.gz: $(foreach target,$(TARGETS),.build-cache/%/$(target)) .build-cache/CHANGELOG.md
+	cp -f README.md .build-cache/$*
+	tar czf $@ -C .build-cache/$* .
 
 check: .build-cache/testpkgs.list
 	cat $< | xargs go test
