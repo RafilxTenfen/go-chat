@@ -3,7 +3,7 @@ GOBUILD=$(GO) build
 BUILDENV=GOTRACEBACK=none CGO_ENABLED=0
 GOENV=$(GO) env
 FLAGS=-trimpath
-LDFLAGS=-ldflags "-w -s"
+LDFLAGS=-tags netgo -ldflags '-w -s -extldflags "-static"'
 CMD_PACKAGE=./cmd
 
 # os/env information
