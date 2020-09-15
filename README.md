@@ -1,4 +1,4 @@
-# Go chat for Socks
+# Go chat for Stocks
 
 - Simple chat application using Go
 
